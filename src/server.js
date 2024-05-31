@@ -1,16 +1,22 @@
-const Hapi = require('@hapi/hapi');
-const routes = require('./routes');
+const express = require('express');
+const routes = require('./routes'); // Asumsikan routes adalah array yang diubah sesuai dengan Express
 
-const init = async() => {
-    const server = Hapi.server({
-        port: 3000,
-        host: 'localhost'
-    });
+const app = express();
+const port = 3000;
 
-    server.route(routes);
+// Middleware untuk parsing JSON (jika diperlukan)
+app.use(express.json());
 
-    await server.start();
-    console.log(`Server berjalan pada ${server.info.uri}`);
-};
+// Register routes
+routes.forEach(route => {
+    if (route.method.toLowerCase() === 'get') {
+        app.get(route.path, route.handler);
+    } else if (route.method.toLowerCase() === 'post') {
+        app.post(route.path, route.handler);
+    }
+    // Tambahkan metode HTTP lain sesuai kebutuhan
+});
 
-init();
+app.listen(port, () => {
+    console.log(`Server berjalan pada http://localhost:${port}`);
+});
