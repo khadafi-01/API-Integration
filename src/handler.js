@@ -2,7 +2,7 @@
 const { nanoid } = require('nanoid');
 
 // Importing the list of places from an external file
-const placeList = require('./placeName');
+const placeList = require('./place');
 
 // Handler function to create a new place
 const createPlaceHandler = (request, h) => {
