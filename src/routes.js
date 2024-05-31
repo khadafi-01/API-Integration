@@ -3,7 +3,8 @@ const {
     getAllPlacesHandler,
     getPlaceByIdHandler,
     editPlaceByIdHandler,
-    deletePlaceByIdHandler
+    deletePlaceByIdHandler,
+    addRatingHandler
 } = require('./handler');
 
 const routes = [{
@@ -30,6 +31,12 @@ const routes = [{
         method: 'DELETE',
         path: '/places/{id}',
         handler: deletePlaceByIdHandler,
+    },
+
+    {
+        method: 'POST',
+        path: 'places/{id}/rating',
+        handler: addRatingHandler,
     },
 ];
 
