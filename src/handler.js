@@ -1,8 +1,10 @@
-// Importing the nanoid library to generate unique IDs
-const { nanoid } = require('nanoid');
-
 // Importing the list of places from an external file
 const placeList = require('./place');
+
+// Function to generate unique IDs
+const generateUniqueId = () => {
+    return Math.random().toString(36).substr(2, 16);
+};
 
 // Handler function to create a new place
 const createPlaceHandler = (request, h) => {
@@ -23,7 +25,7 @@ const createPlaceHandler = (request, h) => {
     }
 
     // Generating a unique ID
-    const id = nanoid(16);
+    const id = generateUniqueId();
     const createdAt = new Date().toISOString();
     const updatedAt = createdAt;
 
@@ -37,6 +39,7 @@ const createPlaceHandler = (request, h) => {
         imageUrl,
         createdAt,
         updatedAt,
+        rating: 0, // Default rating value
     };
 
     // Adding the new place to the place list
@@ -93,6 +96,7 @@ const fetchAllPlacesHandler = (request, h) => {
                 location: place.location,
                 category: place.category,
                 imageUrl: place.imageUrl,
+                rating: place.rating, // Include rating in the response
             })),
         },
     }).code(200);
@@ -188,6 +192,34 @@ const removePlaceByIdHandler = (request, h) => {
     }).code(404);
 };
 
+// Handler function to add rating to a place
+const addRatingHandler = (request, h) => {
+    const { id } = request.params;
+    const { rating } = request.payload;
+
+    // Finding the place with the given ID
+    const placeIndex = placeList.findIndex((place) => place.id === id);
+
+    // If place not found, return error
+    if (placeIndex === -1) {
+        return h.response({
+            status: 'fail',
+            message: 'Tempat wisata tidak ditemukan.',
+        }).code(404);
+    }
+
+    // Adding the rating to the place
+    placeList[placeIndex].rating = rating;
+
+    return h.response({
+        status: 'success',
+        message: 'Rating berhasil ditambahkan.',
+        data: {
+            place: placeList[placeIndex],
+        },
+    }).code(200);
+};
+
 // Exporting the handler functions for use in other modules
 module.exports = {
     createPlaceHandler,
@@ -195,4 +227,5 @@ module.exports = {
     fetchPlaceByIdHandler,
     updatePlaceByIdHandler,
     removePlaceByIdHandler,
+    addRatingHandler, // Export the new handler
 };
