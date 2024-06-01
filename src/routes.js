@@ -35,8 +35,8 @@ const routes = [{
 
     {
         method: 'POST',
-        path: '/places/{id}/rating',
-        handler: addRatingHandler
+        path: 'places/{id}/rating',
+        handler: addRatingHandler,
     },
 ];
 
