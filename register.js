@@ -1,35 +1,38 @@
-// Simulate a user database (replace this with actual database operations)
+const express = require('express');
+const router = express.Router();
+
 let users = [];
 
 // Handler function to handle user registration
-const registerHandler = (request, h) => {
-    const { username, password } = request.payload;
+const registerHandler = (req, res) => {
+    const { username, email, password } = req.body;
 
-    // Check if username and password are provided
-    if (!username || !password) {
-        return h.response({
+    // Check if username, email, and password are provided
+    if (!username || !email || !password) {
+        return res.status(400).json({
             status: 'fail',
-            message: 'Username and password are required.',
-        }).code(400);
+            message: 'Username, email, and password are required.',
+        });
     }
 
-    // Check if the username is already taken
-    if (users.some(user => user.username === username)) {
-        return h.response({
+    // Check if the username or email is already taken
+    if (users.some(user => user.username === username || user.email === email)) {
+        return res.status(409).json({
             status: 'fail',
-            message: 'Username already exists.',
-        }).code(409); // Conflict
+            message: 'Username or email already exists.',
+        }); // Conflict
     }
 
     // Add the new user to the database
-    users.push({ username, password });
+    users.push({ username, email, password });
 
-    return h.response({
+    return res.status(201).json({
         status: 'success',
         message: 'User registered successfully.',
-    }).code(201);
+    });
 };
 
-module.exports = {
-    registerHandler
-};
+// Register route
+router.post('/register', registerHandler);
+
+module.exports = router;
